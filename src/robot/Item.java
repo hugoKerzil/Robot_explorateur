@@ -1,4 +1,4 @@
-import nicellipse.component.NiBasicComponent;
+package robot;
 
 public class Item {
 

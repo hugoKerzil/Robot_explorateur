@@ -1,5 +1,4 @@
-import java.nio.file.Path;
-import java.nio.file.Paths;
+package robot;
 
 public class Robot {
     private Position position;
