@@ -4,6 +4,12 @@ import java.nio.file.Paths;
 public class Robot {
     private Position position;
     private Direction direction;
+    private Board board;
+
+    public Robot(Board board) {
+        this.direction = Direction.EAST;
+        this.board = board;
+    }
 
     public Direction getDirection() {
         return direction;
@@ -21,24 +27,8 @@ public class Robot {
         this.board = board;
     }
 
-    public Item getCarriedItem() {
-        return carriedItem;
-    }
-
-    public void setCarriedItem(Item carriedItem) {
-        this.carriedItem = carriedItem;
-    }
-
-    private Board board;
-    private Item carriedItem;
-
     public Position getPosition() {
         return position;
-    }
-
-    public Robot(Board board) {
-        this.direction = Direction.EAST;
-        this.board = board;
     }
 
     public void setPosition(Position newPos) {
@@ -72,6 +62,8 @@ public class Robot {
 
         String[] lines = script.split("\\R");
 
+        Boolean startScript = true;
+
         for (String line : lines) {
             line = line.trim();
             if (line.isEmpty()) {
@@ -79,18 +71,33 @@ public class Robot {
             }
 
             String[] parts = line.split("\\s+");
-            String command = parts[0];
 
             switch (parts[0]) {
-                case "base" -> {}
-                case "dir" -> {
-                    if (parts.length < 2) {
-                        throw new IllegalArgumentException("Missing argument for dir");
+                case "base" -> {
+                    if (parts.length < 3) throw new IllegalArgumentException("Missing arguments for base");
+
+                    if (startScript) {
+                        startScript = false;
+                        this.setPosition(new Position(Integer.parseInt(parts[1]), Integer.parseInt(parts[2])));
+                    } else {
+                        throw new IllegalArgumentException("startScript is false");
                     }
+                }
+                case "dir" -> {
+                    if (parts.length < 2) throw new IllegalArgumentException("Missing argument for dir");
+
                     this.setDirection(Direction.valueOf(parts[1]));
                 }
-                case "mov" -> {}
-                case "drop" -> {}
+                case "mov" -> {
+                    if (parts.length < 2) throw new IllegalArgumentException("Missing argument for mov");
+
+                    this.move(Integer.parseInt(parts[1]));
+                }
+                case "drop" -> {
+                    if (parts.length < 2) throw new IllegalArgumentException("Missing argument for drop");
+
+                    this.board.setAt(this.getPosition(), new Item(parts[1]));
+                }
                 default -> throw new IllegalArgumentException("A line is not correct: " + line);
             }
 
