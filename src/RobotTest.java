@@ -1,5 +1,8 @@
+import command.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import robot.*;
+
 import java.awt.Color;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -82,5 +85,72 @@ public class RobotTest {
         assertEquals(new Position(8, 4), robot.getPosition());
         assertSame(robot, board.getAt(new Position(8, 4)));
         assertInstanceOf(Terrain.class, board.getAt(new Position(3, 4)));
+    }
+
+    @Test
+    void testScriptWithOutDrop() {
+        robot.execute("base 4 1\n" +
+                "dir EAST\n" +
+                "mov 2\n" +
+                "mov 3\n" +
+                "dir NORTH\n" +
+                "mov 3");
+
+        assertEquals(new Position(9, 4), robot.getPosition());
+    }
+
+    @Test
+    void testScriptWithDrop() {
+        robot.execute("base 4 1\n" +
+                "dir EAST\n" +
+                "mov 2\n" +
+                "mov 3\n" +
+                "dir NORTH\n" +
+                "mov 3\n" +
+                "drop Chest");
+
+        Item item = (Item) robot.getBoard().getAt(new Position(9, 4));
+
+        assertEquals(new Position(9, 4), robot.getPosition());
+        assertEquals(new Item("Chest").getName(), item.getName());
+    }
+
+    @Test
+    void testBaseCommandIndividually() {
+        Command baseCmd = new BaseCommand(new Position(4, 1));
+        baseCmd.execute(robot);
+
+        assertEquals(new Position(4, 1), robot.getPosition());
+        assertSame(robot, board.getAt(new Position(4, 1)));
+    }
+
+    @Test
+    void testDirectionCommandIndividually() {
+        Command dirCmd = new DirectionCommand(Direction.NORTH);
+        dirCmd.execute(robot);
+
+        assertEquals(Direction.NORTH, robot.getDirection());
+    }
+
+    @Test
+    void testMoveCommandIndividually() {
+        robot.setPosition(new Position(4, 1));
+        Command moveCmd = new MoveCommand(10);
+        moveCmd.execute(robot);
+
+        assertEquals(new Position(14, 1), robot.getPosition());
+        assertSame(robot, board.getAt(new Position(14, 1)));
+    }
+
+    @Test
+    void testDropCommandIndividually() {
+        Position pos = new Position(4, 1);
+        robot.setPosition(pos);
+
+        Item chest = new Item("Chest");
+        Command dropCmd = new DropCommand(chest);
+        dropCmd.execute(robot);
+
+        assertSame(chest, board.getAt(pos));
     }
 }
