@@ -43,6 +43,34 @@ public class CommandParser {
             }
             return new DropCommand(new Item(parts[1]));
         });
+
+        factories.put("startM", parts -> {
+            if (parts.length != 1) {
+                throw new IllegalArgumentException("Soo much argument fro starM");
+            }
+            return new StartMCommand();
+        });
+
+        factories.put("stopM", parts -> {
+            if (parts.length != 1) {
+                throw new IllegalArgumentException("Soo much argument fro starM");
+            }
+            return new StopMCommand();
+        });
+
+        factories.put("resM", parts -> {
+            if (parts.length != 1) {
+                throw new IllegalArgumentException("Soo much argument fro starM");
+            }
+            return new ResMCommand();
+        });
+
+        factories.put("replay", parts -> {
+            if (parts.length != 1) {
+                throw new IllegalArgumentException("Soo much argument fro starM");
+            }
+            return new ReplayCommand();
+        });
     }
 
     // Permet d'ajouter facilement de nouvelles commandes plus tard (Étapes 4 et 5)

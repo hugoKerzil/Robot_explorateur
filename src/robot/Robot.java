@@ -3,18 +3,24 @@ package robot;
 import command.Command;
 import command.CommandParser;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Robot {
     private Position position;
     private Direction direction;
     private Board board;
     private final CommandParser parser;
+    private List<Command> history;
+    private boolean record;
 
     public Robot(Board board) {
         this.direction = Direction.EAST;
         this.board = board;
         this.parser = new CommandParser();
+        this.history = new ArrayList<Command>();
+        this.record = false;
     }
 
     public Direction getDirection() {
@@ -32,6 +38,14 @@ public class Robot {
     public void setBoard(Board board) {
         this.board = board;
     }
+
+    public boolean isRecord() {
+        return record;
+    }
+
+    public void setRecord(boolean record) { this.record = record; }
+
+    public void resetHistory() { this.history = new ArrayList<Command>(); }
 
     public Position getPosition() {
         return position;
