@@ -83,4 +83,32 @@ public class RobotTest {
         assertSame(robot, board.getAt(new Position(8, 4)));
         assertInstanceOf(Terrain.class, board.getAt(new Position(3, 4)));
     }
+
+    @Test
+    void testScriptWithOutDrop() {
+        robot.execute("base 4 1\n" +
+                "dir EAST\n" +
+                "mov 2\n" +
+                "mov 3\n" +
+                "dir NORTH\n" +
+                "mov 3");
+
+        assertEquals(new Position(9, 4), robot.getPosition());
+    }
+
+    @Test
+    void testScriptWithDrop() {
+        robot.execute("base 4 1\n" +
+                "dir EAST\n" +
+                "mov 2\n" +
+                "mov 3\n" +
+                "dir NORTH\n" +
+                "mov 3\n" +
+                "drop Chest");
+
+        Item item = (Item) robot.getBoard().getAt(new Position(9, 4));
+
+        assertEquals(new Position(9, 4), robot.getPosition());
+        assertEquals(new Item("Chest").getName(), item.getName());
+    }
 }
