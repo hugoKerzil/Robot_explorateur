@@ -5,7 +5,6 @@ import command.CommandParser;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class Robot {
     private Position position;
@@ -87,5 +86,27 @@ public class Robot {
         for (Command command : commands) {
             command.execute(this);
         }
+    }
+
+    public List<Command> optimizePath() {
+        List<Command> optimized = new ArrayList<>();
+
+        for (Command command : history) {
+            if (optimized.isEmpty()) {
+                optimized.add(command);
+                continue;
+            }
+
+            Command previous = optimized.get(optimized.size() - 1);
+            List<Command> merged = previous.mergeWith(command);
+
+            if (merged.size() == 1) {
+                optimized.set(optimized.size() - 1, merged.get(0));
+            } else {
+                optimized.add(command);
+            }
+        }
+
+        return optimized;
     }
 }

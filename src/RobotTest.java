@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import robot.*;
 
 import java.awt.Color;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -324,5 +325,69 @@ public class RobotTest {
 
         // Le robot reste en (6, 1)
         assertEquals(new Position(6, 1), robot.getPosition());
+    }
+
+    @Test
+    void testConsecutiveMovesAreMerged() {
+        robot.execute(
+                "base 0 0\n" +
+                        "startM\n" +
+                        "mov 10\n" +
+                        "mov 20"
+        );
+
+        List<Command> optimized = robot.optimizePath();
+
+        assertEquals(1, optimized.size());
+        assertInstanceOf(MoveCommand.class, optimized.get(0));
+        assertEquals(30, ((MoveCommand) optimized.get(0)).getDistance());
+    }
+
+    @Test
+    void testConsecutiveDirectionsAreMerged() {
+        robot.execute(
+                "startM\n" +
+                        "dir EAST\n" +
+                        "dir SOUTH\n" +
+                        "dir NORTH"
+        );
+
+        List<Command> optimized = robot.optimizePath();
+
+        assertEquals(1, optimized.size());
+        assertInstanceOf(DirectionCommand.class, optimized.get(0));
+        assertEquals(
+                Direction.NORTH,
+                ((DirectionCommand) optimized.get(0)).getDirection()
+        );
+    }
+
+    @Test
+    void testIncompatibleCommandsStaySeparate() {
+        robot.execute(
+                "base 0 0\n" +
+                        "startM\n" +
+                        "mov 10\n" +
+                        "dir NORTH"
+        );
+
+        List<Command> optimized = robot.optimizePath();
+
+        assertEquals(2, optimized.size());
+    }
+
+    @Test
+    void testThreeMovesAreMerged() {
+        robot.execute( "base 0 0\n" +
+                "startM\n" +
+                        "mov 10\n" +
+                        "mov 20\n" +
+                        "mov 5"
+        );
+
+        List<Command> optimized = robot.optimizePath();
+
+        assertEquals(1, optimized.size());
+        assertEquals(35, ((MoveCommand) optimized.get(0)).getDistance());
     }
 }
