@@ -19,9 +19,4 @@ public class WBackCommand implements Command{
 
         robot.setRecord(wasRecording);
     }
-
-    @Override
-    public Command inverse() {
-        return this;
-    }
 }

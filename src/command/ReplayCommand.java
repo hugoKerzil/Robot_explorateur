@@ -14,9 +14,4 @@ public class ReplayCommand implements Command{
             command.execute(robot);
         }
     }
-
-    @Override
-    public Command inverse() {
-        return this;
-    }
 }

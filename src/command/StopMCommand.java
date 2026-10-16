@@ -7,9 +7,4 @@ public class StopMCommand implements Command{
     public void execute(Robot robot) {
         robot.setRecord(false);
     }
-
-    @Override
-    public Command inverse() {
-        return this;
-    }
 }

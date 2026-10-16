@@ -8,9 +8,4 @@ public class RemoveItemCommand implements Command {
     public void execute(Robot robot) {
         robot.getBoard().removeAt(robot.getPosition());
     }
-
-    @Override
-    public Command inverse() {
-        return this;
-    }
 }
