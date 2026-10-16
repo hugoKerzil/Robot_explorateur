@@ -153,4 +153,92 @@ public class RobotTest {
 
         assertSame(chest, board.getAt(pos));
     }
+
+    @Test
+    void testCommandsAreRecordedInOrder() {
+        robot.execute("startM\n" +
+                "base 4 1\n" +
+                "dir EAST\n" +
+                "mov 2\n" +
+                "dir NORTH\n" +
+                "mov 3");
+
+        // Vérifie que les 5 commandes du script sont enregistrées dans le bon ordre
+        assertEquals(4, robot.getHistory().size());
+        assertInstanceOf(DirectionCommand.class, robot.getHistory().get(0));
+        assertInstanceOf(MoveCommand.class, robot.getHistory().get(1));
+        assertInstanceOf(DirectionCommand.class, robot.getHistory().get(2));
+        assertInstanceOf(MoveCommand.class, robot.getHistory().get(3));
+    }
+
+    @Test
+    void testReplayExampleFromSubjectInScript() {
+        // On place le robot en (4, 1) hors enregistrement (stopM) pour que le replay
+        // ne téléporte pas le robot en (4, 1) lorsqu'on le replacera en (5, 1)
+        robot.execute("base 4 1\n" +
+                "startM\n" +
+                "dir EAST\n" +
+                "mov 2\n" +
+                "mov 3\n" +
+                "dir NORTH\n" +
+                "mov 3\n" +
+                "stopM\n" +
+                "base 5 1\n" +
+                "replay");
+
+        assertEquals(new Position(10, 4), robot.getPosition());
+    }
+
+    @Test
+    void testStopMAndStartMInScript() {
+        // "mov 5" est exécuté après stopM : il déplace le robot mais n'est pas enregistré.
+        // En replaçant le robot en (0, 0) avant "replay", seul "mov 3" (EAST) et "mov 2" (NORTH) sont rejoués.
+        robot.execute("stopM\n" +
+                "base 0 0\n" +
+                "startM\n" +
+                "dir EAST\n" +
+                "mov 3\n" +
+                "stopM\n" +
+                "mov 5\n" +
+                "startM\n" +
+                "dir NORTH\n" +
+                "mov 2\n" +
+                "stopM\n" +
+                "base 0 0\n" +
+                "replay");
+
+        assertEquals(new Position(3, 2), robot.getPosition());
+    }
+
+    @Test
+    void testResMClearsHistoryInScript() {
+        // "resM" vide l'historique : le "replay" qui suit après "base 2 2" ne doit rien faire
+        robot.execute("base 0 0\n" +
+                "dir EAST\n" +
+                "mov 4\n" +
+                "resM\n" +
+                "stopM\n" +
+                "base 2 2\n" +
+                "replay");
+
+        assertTrue(robot.getHistory().isEmpty());
+        assertEquals(new Position(2, 2), robot.getPosition());
+    }
+
+    @Test
+    void testControlCommandsAreNotRecordedInScript() {
+        robot.execute("stopM\n" +
+                "base 0 0\n" +
+                "resM\n" +
+                "startM\n" +
+                "dir EAST\n" +
+                "mov 3\n" +
+                "replay");
+
+        // Seules "dir EAST" et "mov 3" doivent être enregistrées (aucune commande de contrôle)
+        assertEquals(2, robot.getHistory().size());
+
+        // "mov 3" exécuté une fois + rejoué une fois par "replay" = (6, 0)
+        assertEquals(new Position(6, 0), robot.getPosition());
+    }
 }

@@ -61,6 +61,14 @@ public class Robot {
         }
     }
 
+    public List<Command> getHistory() {
+        return history;
+    }
+
+    public void addCommandInHistory(Command command) {
+        history.add(command);
+    }
+
     public void move(int value) {
         int newX = position.getX();
         int newY = position.getY();

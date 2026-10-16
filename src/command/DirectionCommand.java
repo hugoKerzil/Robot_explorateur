@@ -12,6 +12,7 @@ public class DirectionCommand implements Command {
 
     @Override
     public void execute(Robot robot) {
+        if (robot.isRecord()) robot.addCommandInHistory(this);
         robot.setDirection(this.direction);
     }
 }

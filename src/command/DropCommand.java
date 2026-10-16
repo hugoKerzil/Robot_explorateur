@@ -13,6 +13,7 @@ public class DropCommand implements Command{
 
     @Override
     public void execute(Robot robot) {
+        if (robot.isRecord()) robot.addCommandInHistory(this);
         robot.getBoard().setAt(robot.getPosition(), this.item);
     }
 }
