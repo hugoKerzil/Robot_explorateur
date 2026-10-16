@@ -13,6 +13,12 @@ public class MoveCommand implements Command{
     @Override
     public void execute(Robot robot) {
         if (robot.isRecord()) robot.addCommandInHistory(this);
+
         robot.move(distance);
+    }
+
+    @Override
+    public Command inverse() {
+        return new MoveCommand(-distance);
     }
 }

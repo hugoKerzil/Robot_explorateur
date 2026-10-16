@@ -8,4 +8,9 @@ public class ResMCommand implements Command{
     public void execute(Robot robot) {
         robot.resetHistory();
     }
+
+    @Override
+    public Command inverse() {
+        return this;
+    }
 }

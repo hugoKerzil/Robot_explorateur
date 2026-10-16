@@ -15,7 +15,7 @@ public class CommandParser {
 
     public CommandParser() {
         factories.put("base", parts -> {
-            if (parts.length < 3) {
+            if (parts.length != 3) {
                 throw new IllegalArgumentException("Missing arguments for base");
             }
             int x = Integer.parseInt(parts[1]);
@@ -24,21 +24,21 @@ public class CommandParser {
         });
 
         factories.put("dir", parts -> {
-            if (parts.length < 2) {
+            if (parts.length != 2) {
                 throw new IllegalArgumentException("Missing argument for dir");
             }
             return new DirectionCommand(Direction.valueOf(parts[1]));
         });
 
         factories.put("mov", parts -> {
-            if (parts.length < 2) {
+            if (parts.length != 2) {
                 throw new IllegalArgumentException("Missing argument for mov");
             }
             return new MoveCommand(Integer.parseInt(parts[1]));
         });
 
         factories.put("drop", parts -> {
-            if (parts.length < 2) {
+            if (parts.length != 2) {
                 throw new IllegalArgumentException("Missing argument for drop");
             }
             return new DropCommand(new Item(parts[1]));
@@ -46,30 +46,37 @@ public class CommandParser {
 
         factories.put("startM", parts -> {
             if (parts.length != 1) {
-                throw new IllegalArgumentException("Soo much argument fro starM");
+                throw new IllegalArgumentException("Soo much argument for starM");
             }
             return new StartMCommand();
         });
 
         factories.put("stopM", parts -> {
             if (parts.length != 1) {
-                throw new IllegalArgumentException("Soo much argument fro starM");
+                throw new IllegalArgumentException("Soo much argument for starM");
             }
             return new StopMCommand();
         });
 
         factories.put("resM", parts -> {
             if (parts.length != 1) {
-                throw new IllegalArgumentException("Soo much argument fro starM");
+                throw new IllegalArgumentException("Soo much argument for starM");
             }
             return new ResMCommand();
         });
 
         factories.put("replay", parts -> {
             if (parts.length != 1) {
-                throw new IllegalArgumentException("Soo much argument fro starM");
+                throw new IllegalArgumentException("Soo much argument for starM");
             }
             return new ReplayCommand();
+        });
+
+        factories.put("wback", parts -> {
+            if (parts.length != 1) {
+                throw new IllegalArgumentException("Soo much arguments for wback");
+            }
+            return new WBackCommand();
         });
     }
 

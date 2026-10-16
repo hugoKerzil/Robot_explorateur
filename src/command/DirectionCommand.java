@@ -5,6 +5,7 @@ import robot.Robot;
 
 public class DirectionCommand implements Command {
     private final Direction direction;
+    private Direction previousDirection;
 
     public DirectionCommand(Direction direction) {
         this.direction = direction;
@@ -13,6 +14,12 @@ public class DirectionCommand implements Command {
     @Override
     public void execute(Robot robot) {
         if (robot.isRecord()) robot.addCommandInHistory(this);
+        previousDirection = robot.getDirection();
         robot.setDirection(this.direction);
+    }
+
+    @Override
+    public Command inverse() {
+        return new DirectionCommand(previousDirection);
     }
 }

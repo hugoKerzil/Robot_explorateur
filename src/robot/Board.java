@@ -77,6 +77,8 @@ public class Board {
         this.matrices.put(pos, element);
     }
 
+    public void removeAt(Position pos) { this.matrices.remove(pos); }
+
     public void restoreTerrain(Position pos) {
         this.matrices.put(pos, this.terrains.get(pos));
     }

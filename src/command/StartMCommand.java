@@ -7,4 +7,9 @@ public class StartMCommand implements Command{
     public void execute(Robot robot) {
         robot.setRecord(true);
     }
+
+    @Override
+    public Command inverse() {
+        return this;
+    }
 }

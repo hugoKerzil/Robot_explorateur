@@ -14,7 +14,6 @@ public class Robot {
     private final CommandParser parser;
     private List<Command> history;
     private boolean record;
-
     public Robot(Board board) {
         this.direction = Direction.EAST;
         this.board = board;

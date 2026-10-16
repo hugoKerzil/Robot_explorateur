@@ -193,8 +193,7 @@ public class RobotTest {
     void testStopMAndStartMInScript() {
         // "mov 5" est exécuté après stopM : il déplace le robot mais n'est pas enregistré.
         // En replaçant le robot en (0, 0) avant "replay", seul "mov 3" (EAST) et "mov 2" (NORTH) sont rejoués.
-        robot.execute("stopM\n" +
-                "base 0 0\n" +
+        robot.execute("base 0 0\n" +
                 "startM\n" +
                 "dir EAST\n" +
                 "mov 3\n" +
@@ -214,6 +213,7 @@ public class RobotTest {
     void testResMClearsHistoryInScript() {
         // "resM" vide l'historique : le "replay" qui suit après "base 2 2" ne doit rien faire
         robot.execute("base 0 0\n" +
+                "startM\n" +
                 "dir EAST\n" +
                 "mov 4\n" +
                 "resM\n" +
@@ -227,8 +227,7 @@ public class RobotTest {
 
     @Test
     void testControlCommandsAreNotRecordedInScript() {
-        robot.execute("stopM\n" +
-                "base 0 0\n" +
+        robot.execute("base 0 0\n" +
                 "resM\n" +
                 "startM\n" +
                 "dir EAST\n" +
@@ -240,5 +239,90 @@ public class RobotTest {
 
         // "mov 3" exécuté une fois + rejoué une fois par "replay" = (6, 0)
         assertEquals(new Position(6, 0), robot.getPosition());
+    }
+
+    @Test
+    void testWbackExampleFromSubjectInScript() {
+        // On place le robot en (4, 1) hors enregistrement, puis on exécute l'exemple du sujet
+        robot.execute("base 4 1\n" +
+                "startM\n" +
+                "dir EAST\n" +
+                "mov 5\n" +
+                "dir NORTH\n" +
+                "mov 3\n" +
+                "dir EAST\n" +
+                "mov 4\n" +
+                "wback");
+
+        // Le robot doit être revenu à son point de départ (4, 1)
+        assertEquals(new Position(4, 1), robot.getPosition());
+    }
+
+    @Test
+    void testWbackInAllFourDirectionsInScript() {
+        // Parcours utilisant les 4 directions (NORTH, WEST, SOUTH, EAST) avant de revenir
+        robot.execute("base 10 10\n" +
+                "startM\n" +
+                "dir NORTH\n" +
+                "mov 4\n" +
+                "dir WEST\n" +
+                "mov 3\n" +
+                "dir SOUTH\n" +
+                "mov 2\n" +
+                "dir EAST\n" +
+                "mov 5\n" +
+                "wback");
+
+        // Le robot doit retrouver sa position initiale (10, 10)
+        assertEquals(new Position(10, 10), robot.getPosition());
+    }
+
+    @Test
+    void testWbackOnlyReversesRecordedCommandsInScript() {
+        // Le premier déplacement (mov 5 vers l'EST) n'est pas enregistré (stopM).
+        // Le parcours enregistré démarre donc en (5, 0).
+        robot.execute("base 0 0\n" +
+                "dir EAST\n" +
+                "mov 5\n" +
+                "startM\n" +
+                "dir NORTH\n" +
+                "mov 4\n" +
+                "dir EAST\n" +
+                "mov 2\n" +
+                "wback");
+
+        // wback ne doit inverser que les commandes enregistrées et ramener le robot en (5, 0)
+        assertEquals(new Position(5, 0), robot.getPosition());
+    }
+
+    @Test
+    void testWbackWithDropCommandAndControlCommandsInScript() {
+        // Vérifie que les opérations sans inverse évident (comme drop) et les commandes
+        // de contrôle n'empêchent pas le retour au point de départ
+        robot.execute("base 2 2\n" +
+                "startM\n" +
+                "dir EAST\n" +
+                "mov 3\n" +
+                "drop Chest\n" +
+                "dir NORTH\n" +
+                "mov 4\n" +
+                "wback");
+
+        // Le robot est bien revenu en (2, 2) et wback ne s'est pas enregistrée elle-même
+        assertEquals(new Position(2, 2), robot.getPosition());
+    }
+
+    @Test
+    void testWbackAfterResMDoesNothingInScript() {
+        // Si l'historique est vidé par resM, wback n'a aucun parcours à inverser
+        robot.execute("base 1 1\n" +
+                "startM\n" +
+                "dir EAST\n" +
+                "mov 5\n" +
+                "resM\n" +
+                "wback");
+
+        // Le robot reste en (6, 1)
+        assertEquals(new Position(6, 1), robot.getPosition());
     }
 }

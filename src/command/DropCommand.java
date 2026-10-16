@@ -16,4 +16,9 @@ public class DropCommand implements Command{
         if (robot.isRecord()) robot.addCommandInHistory(this);
         robot.getBoard().setAt(robot.getPosition(), this.item);
     }
+
+    @Override
+    public Command inverse() {
+        return new RemoveItemCommand();
+    }
 }

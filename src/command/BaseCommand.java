@@ -14,4 +14,9 @@ public class BaseCommand implements Command {
     public void execute(Robot robot) {
         robot.setPosition(this.position);
     }
+
+    @Override
+    public Command inverse() {
+        return this;
+    }
 }
