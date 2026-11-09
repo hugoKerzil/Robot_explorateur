@@ -9,7 +9,7 @@ public interface Command {
     void execute(Robot robot);
 
      default Command inverse() {
-         throw new UnsupportedOperationException("Cette opération n'est pas suporter par cette classe.");
+         throw new UnsupportedOperationException("Cette opération n'est pas supporter par cette classe.");
      };
 
      default List<Command> mergeWith(Command other) {

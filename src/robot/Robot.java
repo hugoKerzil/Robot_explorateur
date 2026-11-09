@@ -2,6 +2,7 @@ package robot;
 
 import command.Command;
 import command.CommandParser;
+import view.Observer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +11,12 @@ public class Robot {
     private Position position;
     private Direction direction;
     private Board board;
-    private final CommandParser parser;
     private List<Command> history;
     private boolean record;
+
+    private final CommandParser parser;
+    private final List<Observer> observers = new ArrayList<Observer>();
+
     public Robot(Board board) {
         this.direction = Direction.EAST;
         this.board = board;
@@ -27,6 +31,7 @@ public class Robot {
 
     public void setDirection(Direction direction) {
         this.direction = direction;
+        notifyObservers();
     }
 
     public Board getBoard() {
@@ -57,6 +62,7 @@ public class Robot {
         if (this.board != null && newPos != null) {
             this.board.setAt(newPos, this);
         }
+        notifyObservers();
     }
 
     public List<Command> getHistory() {
@@ -109,4 +115,19 @@ public class Robot {
 
         return optimized;
     }
+
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    private void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.updated();
+        }
+    }
+
 }
